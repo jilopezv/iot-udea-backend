@@ -2,6 +2,8 @@ package co.edu.udea.iot.backend.service;
 
 import co.edu.udea.iot.backend.broker.HomeBroker;
 import co.edu.udea.iot.backend.broker.webclient.WebPublisher;
+import co.edu.udea.iot.backend.dto.DeviceDTO;
+import co.edu.udea.iot.backend.mapper.DeviceMapper;
 import co.edu.udea.iot.backend.model.Device;
 import co.edu.udea.iot.backend.model.Home;
 import co.edu.udea.iot.backend.model.Message;
@@ -23,16 +25,20 @@ public class HomeService {
 
     private DeviceRepository deviceRepository;
 
+    private DeviceMapper deviceMapper;
+
     private final HomeBroker broker;
 
     private final WebPublisher  webPublisher;
 
 
-    public HomeService(HomeRepository homeRepository, DeviceRepository deviceRepository, HomeBroker broker, WebPublisher webPublisher) {
+    public HomeService(HomeRepository homeRepository, DeviceRepository deviceRepository,
+                       DeviceMapper deviceMapper, HomeBroker broker, WebPublisher webPublisher) {
         this.homeRepository = homeRepository;
         this.deviceRepository = deviceRepository;
         this.broker = broker;
         this.webPublisher = webPublisher;
+        this.deviceMapper = deviceMapper;
         try {
             this.broker.listen("home_outbound", this::processMessageFromHome);
         } catch (MqttException mqttException) {
@@ -83,7 +89,7 @@ public class HomeService {
             String deviceName = subtoken[0];
             String deviceStatus = subtoken[1];
             Optional<Device> deviceOptional = deviceRepository.findByName(deviceName);
-            if (!deviceOptional.isPresent()) {
+            if (deviceOptional.isEmpty()) {
                 System.err.println("A MESSAGE FROM A UNKNOWN DEVICE HAS BEEN RECEIVED {" + deviceName + "}");
                 return;
             }
@@ -101,8 +107,8 @@ public class HomeService {
         }
     }
 
-    public List<Device> findAllDevices() {
-        return deviceRepository.findAll();
+    public List<DeviceDTO> findAllDevices() {
+        return deviceMapper.toDto(deviceRepository.findAll());
     }
 
     public void sendMessageToWebClient(String message) {

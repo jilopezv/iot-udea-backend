@@ -9,6 +9,8 @@ import java.util.Set;
 public class Home {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private String status;
 
@@ -16,6 +18,17 @@ public class Home {
     @OneToMany(mappedBy = "home", fetch = FetchType.LAZY)
     private Set<Device> devices;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getName() {
         return name;

@@ -2,6 +2,7 @@ package co.edu.udea.iot.backend.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
@@ -11,13 +12,14 @@ public class Device {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
+    @NotBlank(message = "Name is required")
     private String name;
     private String status;
     private LocalDateTime lastUpdated;
 
     @Column(name = "fk_home")
-    private String homeName;
+    private Long homeId;
 
     //relationships
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,12 +58,12 @@ public class Device {
         this.lastUpdated = lastUpdated;
     }
 
-    public String getHomeName() {
-        return homeName;
+    public Long getHomeId() {
+        return homeId;
     }
 
-    public void setHomeName(Integer homeCode) {
-        this.homeName = homeName;
+    public void setHomeId(Long homeId) {
+        this.homeId = homeId;
     }
 
     public Home getHome() {

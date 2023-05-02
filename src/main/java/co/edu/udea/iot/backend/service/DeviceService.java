@@ -5,7 +5,6 @@ import co.edu.udea.iot.backend.exception.DataDuplicatedException;
 import co.edu.udea.iot.backend.mapper.DeviceMapper;
 import co.edu.udea.iot.backend.model.Device;
 import co.edu.udea.iot.backend.repository.DeviceRepository;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -23,12 +22,14 @@ public class DeviceService {
         this.deviceRepository = deviceRepository;
     }
 
-    public DeviceDTO saveDevice(@Valid DeviceDTO deviceDTO) {
+    public DeviceDTO saveDevice(DeviceDTO deviceDTO) {
         Optional<Device> deviceOptional = deviceRepository.findByName(deviceDTO.getName());
         if (deviceOptional.isPresent()) {
             throw new DataDuplicatedException(String.format("There is already a device with name: %s", deviceDTO.getName()));
         }
-        Device savedDevice=  deviceRepository.save(mapper.toEntity(deviceDTO));
+        Device device = mapper.toEntity(deviceDTO);
+        device.setHomeId(1L);
+        Device savedDevice = deviceRepository.save(device);
         return mapper.toDto(savedDevice);
     }
 }

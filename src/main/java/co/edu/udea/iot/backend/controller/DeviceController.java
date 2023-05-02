@@ -1,7 +1,6 @@
 package co.edu.udea.iot.backend.controller;
 
 import co.edu.udea.iot.backend.dto.DeviceDTO;
-import co.edu.udea.iot.backend.model.Device;
 import co.edu.udea.iot.backend.service.DeviceService;
 import co.edu.udea.iot.backend.service.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,13 +27,13 @@ public class DeviceController {
     @Operation(description = "View a list of available devices")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list",
-                    content = @Content(schema = @Schema(implementation = Device.class))),
+                    content = @Content(schema = @Schema(implementation = DeviceDTO.class))),
             @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
     })
     @GetMapping
-    public List<Device> getAllDevices() {
+    public List<DeviceDTO> getAllDevices() {
         return homeService.findAllDevices();
     }
 
